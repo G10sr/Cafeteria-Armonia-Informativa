@@ -10,4 +10,6 @@ function Cart(){
     );
 }
 
+/*La construccion del carrito en si */
+
 export default Cart;
