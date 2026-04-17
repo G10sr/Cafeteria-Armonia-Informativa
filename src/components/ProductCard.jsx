@@ -1,6 +1,6 @@
 import '../assets/css/productCard.css';
 import Button from "./CustomButton";
-import { addToCart } from "./Carrito";
+import { addToCart } from "../pages/Carrito";
 
 function ProductCard({ product }) {
 
@@ -11,7 +11,7 @@ function ProductCard({ product }) {
       <p>{product.descripcion}</p>
       <p>${product.precio}</p>
 
-      <Button onClick={() => addToCart(product)}>
+      <Button onClick={() => addToCart(product.id)}>
         Comprar
       </Button>
     </div>

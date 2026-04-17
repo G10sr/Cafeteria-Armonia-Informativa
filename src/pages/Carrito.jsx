@@ -1,43 +1,69 @@
 import { useEffect, useState } from "react";
 import "../assets/css/carrito.css";
+import LoadCart from "../components/LoadCart";
 
-let cart = [];
+let cartData = { items: [] };
 let listeners = [];
 
-
 const notify = () => {
-  listeners.forEach((listener) => listener([...cart]));
+  listeners.forEach((listener) => listener({ ...cartData }));
 };
 
+const saveCart = async () => {
+  try {
+    await fetch("http://localhost:3001/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: cartData.lastAddedId || "" }),
+    });
+  } catch (e) {
+    console.error("Save failed", e);
+  }
+};
 
-export const addToCart = (product) => {
-  const existing = cart.find((item) => item.id === product.id);
+const loadCart = async () => {
+  try {
+    const res = await fetch("http://localhost:3001/api/cart");
+    const data = await res.json();
+    cartData = data;
+    notify();
+  } catch (e) {
+    console.error("Load failed", e);
+  }
+};
 
+loadCart();
+
+export const addToCart = async (id) => {
+  const existing = cartData.items.find((item) => item.id === id);
   if (existing) {
     existing.cantidad += 1;
   } else {
-    cart.push({ ...product, cantidad: 1 });
+    cartData.items.push({ id, cantidad: 1 });
   }
-
+  cartData.lastAddedId = id;
   notify();
+  await saveCart();
 };
 
-export const removeFromCart = (id) => {
-  cart = cart.filter((item) => item.id !== id);
+export const removeFromCart = async (id) => {
+  cartData.items = cartData.items.filter((item) => item.id !== id);
   notify();
+  await saveCart();
 };
 
-export const updateQuantity = (id, cantidad) => {
-  const item = cart.find((i) => i.id === id);
+export const updateQuantity = async (id, cantidad) => {
+  const item = cartData.items.find((i) => i.id === id);
   if (item && cantidad > 0) {
     item.cantidad = cantidad;
   }
   notify();
+  await saveCart();
 };
 
 export const subscribe = (listener) => {
   listeners.push(listener);
-  listener([...cart]);
+  listener(cartData);
 
   return () => {
     listeners = listeners.filter((l) => l !== listener);
@@ -46,7 +72,12 @@ export const subscribe = (listener) => {
 
 
 function Cart() {
-  return <section></section>;
+  return (
+    <section className="carrito-page">
+      <h1>Carrito de Compras</h1>
+      <LoadCart />
+    </section>
+  );
 }
 
 export default Cart;

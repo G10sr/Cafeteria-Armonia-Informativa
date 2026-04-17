@@ -1,0 +1,11 @@
+.carrito-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.carrito-page h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}

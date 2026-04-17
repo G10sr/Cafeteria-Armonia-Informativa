@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../assets/css/carrito-loader.css";
-import { subscribe, removeFromCart, updateQuantity } from "./Carrito";
+import { subscribe, removeFromCart, updateQuantity } from "../pages/Carrito";
 
 function CartLoader() {
   const [cart, setCart] = useState([]);
