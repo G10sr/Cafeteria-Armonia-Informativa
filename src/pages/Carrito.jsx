@@ -102,7 +102,7 @@ export const subscribe = (listener) => {
 export const clearCart = async () => {
   try {
     cartData.items = [];
-
+    notify();
     await saveCart();
 
     alert("Compra realizada con éxito");
