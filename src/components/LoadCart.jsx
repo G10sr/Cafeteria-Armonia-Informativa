@@ -2,67 +2,72 @@ import { useEffect, useState } from "react";
 import "../assets/css/carrito-loader.css";
 import { subscribe, removeFromCart, updateQuantity } from "../pages/Carrito";
 
+/**
+ * ESTRUCTURA DEL CARRITO:
+ * {
+ *   items: [
+ *     { id, cantidad }
+ *   ]
+ * }
+ */
+
 function CartLoader() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({ items: [] });
 
   useEffect(() => {
-    if (typeof subscribe !== "function") {
-      console.error("subscribe no está definido correctamente");
-      return;
-    }
-
     const unsubscribe = subscribe((data) => {
-      if (Array.isArray(data)) {
-        setCart(data);
-      }
+      setCart(data || { items: [] });
     });
 
-    return () => {
-      if (typeof unsubscribe === "function") {
-        unsubscribe();
-      }
-    };
+    return unsubscribe;
   }, []);
 
   const handleQuantityChange = (id, value) => {
     const cantidad = parseInt(value, 10);
 
-    if (typeof updateQuantity === "function" && cantidad > 0) {
+    if (cantidad > 0) {
       updateQuantity(id, cantidad);
     }
   };
 
   const handleRemove = (id) => {
-    if (typeof removeFromCart === "function") {
-      removeFromCart(id);
-    }
+    removeFromCart(id);
   };
 
   return (
     <section className="carrito">
       <h2>Carrito</h2>
 
-      {cart.length === 0 ? (
+      {cart.items.length === 0 ? (
         <p>El carrito está vacío</p>
       ) : (
-        cart.map((item) => (
-          <div key={item.id} className="carrito-item">
-            <h4>{item.nombre}</h4>
-            <p>${item.precio}</p>
+        cart.items.map((item) => (
+          <div className="carrito">
+        <h2>Tu carrito</h2>
 
-            <input
-              type="number"
-              value={item.cantidad}
-              min="1"
-              onChange={(e) =>
-                handleQuantityChange(item.id, e.target.value)
-              }
-            />
+        {cart.items.length === 0 ? (
+          <p>El carrito está vacío</p>
+        ) : (
+          cart.items.map((item) => (
+            <div key={item.id} className="carrito-item">
+              <h4>Producto ID: {item.id}</h4>
 
-            <button onClick={() => handleRemove(item.id)}>
-              Eliminar
-            </button>
-          </div>
+              <input
+                type="number"
+                min="1"
+                value={item.cantidad}
+                onChange={(e) =>
+                  updateQuantity(item.id, parseInt(e.target.value))
+                }
+              />
+
+              <button onClick={() => removeFromCart(item.id)}>
+                Eliminar
+              </button>
+            </div>
+          ))
+        )}
+      </div>
         ))
       )}
     </section>

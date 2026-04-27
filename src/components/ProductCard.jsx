@@ -11,13 +11,11 @@ function ProductCard({ product }) {
       <p>{product.descripcion}</p>
       <p>${product.precio}</p>
 
-import { addToCart } from "../utils/cartUtils";
-
-<Button onClick={() => addToCart(product)}>
-  Comprar
-</Button>
+      <Button onClick={() => addToCart(product)}>
+        Comprar
+      </Button>
     </div>
   );
 }
- 
+
 export default ProductCard;
