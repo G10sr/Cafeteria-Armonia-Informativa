@@ -7,42 +7,81 @@ import logo1 from "../assets/img/arLogo.jpg";
 import { subscribe } from "../pages/Carrito";
 
 function Header() {
-
     const location = useLocation();
     const [cartCount, setCartCount] = useState(0);
-    const [text, setText] = useState({
+
+    const text = {
         alt: "Armonía Logo Foto",
         option1: "Home",
         option2: "Productos",
-    });
+    };
 
     useEffect(() => {
+        if (typeof subscribe !== "function") {
+            console.error("subscribe no es una función");
+            return;
+        }
+
         const unsubscribe = subscribe((cart) => {
-            const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+            if (!Array.isArray(cart)) return;
+
+            const totalItems = cart.reduce(
+                (sum, item) => sum + (item.cantidad || 0),
+                0
+            );
+
             setCartCount(totalItems);
         });
-        return unsubscribe;
+
+        // Cleanup seguro
+        return () => {
+            if (typeof unsubscribe === "function") {
+                unsubscribe();
+            }
+        };
     }, []);
 
     return (
         <header>
-            <img src={logo1} alt={text.alt}/>
+            <img src={logo1} alt={text.alt} />
+
             <div id="button-Div">
                 <Link to="/">
-                    <button className={`btn ${location.pathname === "/" ? "active" : ""}`}>{text.option1}</button>
+                    <button
+                        className={`btn ${
+                            location.pathname === "/" ? "active" : ""
+                        }`}
+                    >
+                        {text.option1}
+                    </button>
                 </Link>
+
                 <Link to="/productos">
-                    <button className={`btn ${location.pathname === "/productos" ? "active" : ""}`}>{text.option2}</button>
+                    <button
+                        className={`btn ${
+                            location.pathname === "/productos" ? "active" : ""
+                        }`}
+                    >
+                        {text.option2}
+                    </button>
                 </Link>
+
                 <Link to="/carrito">
                     <div className="cart-container">
                         <FontAwesomeIcon
-                        id="cart-icon"
-                        className={`btn ${location.pathname === "/carrito" ? "active" : ""}`} 
-                        icon={faBasketShopping} 
+                            id="cart-icon"
+                            className={`btn ${
+                                location.pathname === "/carrito"
+                                    ? "active"
+                                    : ""
+                            }`}
+                            icon={faBasketShopping}
                         />
+
                         {cartCount > 0 && (
-                            <span className="cart-count">{cartCount}</span>
+                            <span className="cart-count">
+                                {cartCount}
+                            </span>
                         )}
                     </div>
                 </Link>
