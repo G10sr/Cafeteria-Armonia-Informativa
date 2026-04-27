@@ -7,7 +7,7 @@ import AppearingText from "../components/AppearingText";
  * ESTRUCTURA GLOBAL DEL CARRITO:
  * {
  *   items: [
- *     { id, cantidad }
+ *     { id, nombre, precio, imagen, cantidad }
  *   ]
  * }
  */
@@ -15,12 +15,12 @@ import AppearingText from "../components/AppearingText";
 let cartData = { items: [] };
 let listeners = [];
 
-// 🔔 Notificar cambios a todos los subscribers
+// 🔔 Notificar cambios
 const notify = () => {
   listeners.forEach((listener) => listener({ ...cartData }));
 };
 
-// Guardar carrito en backend
+// Guardar carrito
 const saveCart = async () => {
   try {
     await fetch("http://localhost:3001/api/cart", {
@@ -33,7 +33,7 @@ const saveCart = async () => {
   }
 };
 
-// Cargar carrito desde backend
+// Cargar carrito
 const loadCart = async () => {
   try {
     const res = await fetch("http://localhost:3001/api/cart");
@@ -67,6 +67,7 @@ export const addToCart = async (product) => {
   notify();
   await saveCart();
 };
+
 // Eliminar producto
 export const removeFromCart = async (id) => {
   cartData.items = cartData.items.filter((item) => item.id !== id);
@@ -87,7 +88,7 @@ export const updateQuantity = async (id, cantidad) => {
   await saveCart();
 };
 
-// Suscripción global
+// Suscripción
 export const subscribe = (listener) => {
   listeners.push(listener);
 
@@ -98,7 +99,7 @@ export const subscribe = (listener) => {
   };
 };
 
-//limpiar el carrito
+// Limpiar carrito (compra)
 export const clearCart = async () => {
   try {
     cartData.items = [];
@@ -112,7 +113,7 @@ export const clearCart = async () => {
   }
 };
 
-// COMPONENTE CART (todo unificado aquí)
+// COMPONENTE
 function Cart() {
   const [cart, setCart] = useState({ items: [] });
 
@@ -124,11 +125,14 @@ function Cart() {
     return unsubscribe;
   }, []);
 
+  // ✅ TOTAL GENERAL
+  const totalCarrito = cart.items.reduce((acc, item) => {
+    return acc + item.precio * item.cantidad;
+  }, 0);
+
   return (
     <section className="carrito-page">
-      <AppearingText className="text">
-        Carrito
-      </AppearingText>
+      <AppearingText className="text">Carrito</AppearingText>
 
       <div className="carrito">
         <h2>Tu carrito</h2>
@@ -136,29 +140,34 @@ function Cart() {
         {cart.items.length === 0 ? (
           <p>El carrito está vacío</p>
         ) : (
-          cart.items.map((item) => (
-            <div key={item.id} className="carrito-item">
-              <h4>{item.nombre}</h4>
+          <>
+            {cart.items.map((item) => (
+              <div key={item.id} className="carrito-item">
+                <h4>{item.nombre}</h4>
 
-              <p>Precio: ${item.precio}</p>
-              <p>Total: ${item.precio * item.cantidad}</p>
+                <p>Precio: ${item.precio}</p>
+                <p>Total: ${item.precio * item.cantidad}</p>
 
-              <input
-                type="number"
-                min="1"
-                value={item.cantidad}
-                onChange={(e) =>
-                  updateQuantity(item.id, parseInt(e.target.value))
-                }
-              />
+                <input
+                  type="number"
+                  min="1"
+                  value={item.cantidad}
+                  onChange={(e) =>
+                    updateQuantity(item.id, parseInt(e.target.value))
+                  }
+                />
 
-              <button onClick={() => removeFromCart(item.id)}>
-                Eliminar
-              </button>
-            </div>
-          ))
+                <button onClick={() => removeFromCart(item.id)}>
+                  Eliminar
+                </button>
+              </div>
+            ))}
+
+            <h3 className="total">Total a pagar: ${totalCarrito}</h3>
+          </>
         )}
       </div>
+
       {cart.items.length > 0 && (
         <button className="buy-button" onClick={clearCart}>
           Comprar
