@@ -80,15 +80,11 @@ app.get("/api/cart", async (req, res) => {
 
 app.post("/api/cart", async (req, res) => {
   try {
-    console.log("BODY RECIBIDO:", req.body);
-
     const cart = {
       items: Array.isArray(req.body?.items)
         ? req.body.items
         : []
     };
-
-    console.log("GUARDANDO EN JSON:", cart);
 
     await fs.writeFile(
       cartFile,
