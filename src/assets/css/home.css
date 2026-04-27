@@ -32,9 +32,10 @@ body{
     font-weight: bolder;
     text-shadow: 1px 6px 4px #333;
     color: white;
-    padding-bottom: 10vh;
+    padding-block: 10vh;
     flex-direction: column;
     margin-top: 10vh;
+    justify-content: center;
 }
 
 .banner img{
