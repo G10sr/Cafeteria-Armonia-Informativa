@@ -4,8 +4,14 @@
   margin: 0 auto;
 }
 
-.carrito-page h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
+.text {
+  position: absolute;
+    top: 10vh;
+    left: 0vw;
+    font-weight: bolder;
+    text-shadow: 1px 6px 4px #333;
+    color: white;
+    z-index: 3;
+    border-radius: 10px;
 }
+

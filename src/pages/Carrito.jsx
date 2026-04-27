@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../assets/css/carrito.css";
 import LoadCart from "../components/LoadCart";
+import AppearingText from "../components/AppearingText";
 
 let cartData = { items: [] };
 let listeners = [];
@@ -73,8 +74,11 @@ export const subscribe = (listener) => {
 
 function Cart() {
   return (
+    
     <section className="carrito-page">
-      <h1>Carrito de Compras</h1>
+      <AppearingText key="valores" className="text">
+        Carrito
+      </AppearingText>      
       <LoadCart />
     </section>
   );
